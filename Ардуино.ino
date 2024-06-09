@@ -1,38 +1,28 @@
-const int trigPin = 9;
-const int echoPin = 10;
+// Определение пинов
+const int sensorPin = A0; // Пин считывания данных с датчика
+const int ledPin = 13;     // Пин светодиода (для индикации)
 
 void setup() {
-  // Инициализация последовательного соединения для вывода данных в монитор порта
+  // Настройка монитора последовательного порта
   Serial.begin(9600);
   
-  // Инициализация пинов
-  pinMode(trigPin, OUTPUT);
-  pinMode(echoPin, INPUT);
+  // Настройка пина для светодиода
+  pinMode(ledPin, OUTPUT);
 }
 
 void loop() {
-  // Переменные для измерения времени
-  long duration;
-  int distance;
+  // Считывание значения с датчика
+  int sensorValue = analogRead(sensorPin);
   
-  // Посылаем ультразвуковой импульс
-  digitalWrite(trigPin, LOW);
-  delayMicroseconds(2);
-  digitalWrite(trigPin, HIGH);
-  delayMicroseconds(10);
-  digitalWrite(trigPin, LOW);
+  // Проверка значения на влажность
+  if (sensorValue > 500) {
+    digitalWrite(ledPin, HIGH); // Включение светодиода
+    Serial.println("Вода обнаружена!"); // Вывод сообщения
+  } else {
+    digitalWrite(ledPin, LOW); // Выключение светодиода
+    Serial.println("Вода не обнаружена."); // Вывод сообщения
+  }
   
-  // Считываем время возврата импульса
-  duration = pulseIn(echoPin, HIGH);
-  
-  // Рассчитываем расстояние в сантиметрах
-  distance = duration * 0.034 / 2;
-  
-  // Выводим данные в монитор порта
-  Serial.print("Distance: ");
-  Serial.print(distance);
-  Serial.println(" cm");
-  
-  // Задержка перед следующим измерением
-  delay(500);
+  // Задержка между измерениями
+  delay(1000);
 }
